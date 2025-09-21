@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>Analysis Result</title></head>
+<body>
+  <h2>Word Frequencies</h2>
+  {{ table | safe }}
+
+  <h2>Sentiment Scores</h2>
+  <p>{{ sentiment }}</p>
+
+  <h2>Top Words Plot</h2>
+  <img src="data:image/png;base64,{{ plot }}" />
+</body>
+</html>
