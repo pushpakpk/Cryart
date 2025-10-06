@@ -1,136 +1,154 @@
-# 📹 OpenCV Week 2 - Multi‑Stream RTSP Viewer with Motion and Camera Compromise Detection
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📹 OpenCV Week 2 - RTSP Viewer</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; background: #f9f9f9; color: #2c3e50; }
+    h1, h2, h3, h4 { color: #2c3e50; }
+    code, pre { background: #ecf0f1; padding: 4px 8px; border-radius: 4px; font-family: monospace; }
+    table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+    th, td { border: 1px solid #bdc3c7; padding: 10px; text-align: left; }
+    th { background-color: #34495e; color: white; }
+    img { max-width: 100%; border: 1px solid #ccc; }
+    hr { border: none; border-top: 1px solid #ccc; margin: 30px 0; }
+    ul, ol { margin-left: 20px; }
+  </style>
+</head>
+<body>
 
-This project is the official submission for **Week 2** of the OpenCV real‑time streaming and processing challenge.  
-The goal is to build a system that displays **four real‑time video streams** (simulated RTSP feeds), detects motion, and identifies whether the camera feed is blurred, covered, or compromised.
----
+<h1>📹 OpenCV Week 2 - Multi‑Stream RTSP Viewer with Motion and Camera Compromise Detection</h1>
 
-## 📌 Project Description
+<p>This project is the official submission for <strong>Week 2</strong> of the OpenCV real‑time streaming and processing challenge.<br>
+The goal is to build a system that displays <strong>four real‑time video streams</strong> (simulated RTSP feeds), detects motion, and identifies whether the camera feed is blurred, covered, or compromised.</p>
 
-This application mimics a **real‑time CCTV system** that:
-- Streams video from **four different cameras** in parallel  
-- Detects **motion** in each camera using background subtraction  
-- Detects **tampering** (blurred, covered, or laser interference) using image analysis  
-- Displays the 4 video streams in a **2×2 grid** window  
-- Shows alerts like **“Motion Detected”** or **“Camera Compromised”** as overlay text  
+<hr>
 
-This system can be easily adapted for **real RTSP cameras**, surveillance systems, or home security.
----
+<h2>📌 Project Description</h2>
+<ul>
+  <li>Streams video from <strong>four different cameras</strong> in parallel</li>
+  <li>Detects <strong>motion</strong> in each camera using background subtraction</li>
+  <li>Detects <strong>tampering</strong> (blurred, covered, or laser interference) using image analysis</li>
+  <li>Displays the 4 video streams in a <strong>2×2 grid</strong> window</li>
+  <li>Shows alerts like <strong>“Motion Detected”</strong> or <strong>“Camera Compromised”</strong> as overlay text</li>
+</ul>
 
-## 🗂️ Project Structure
+<p>This system can be easily adapted for <strong>real RTSP cameras</strong>, surveillance systems, or home security.</p>
 
+<hr>
+
+<h2>🗂️ Project Structure</h2>
+<pre>
 opencv-week2/
 ├── code/
-│ └── multi_stream_viewer.py # Main implementation file
+│   └── multi_stream_viewer.py       # Main implementation file
 ├── report/
-│ └── week2_report.md # Detailed explanation and findings
+│   └── week2_report.md              # Detailed explanation and findings
 ├── diagrams/
-│ └── screenshot_output.png # Screenshot of the 2×2 viewer
-└── README.md # You are here
+│   └── screenshot_output.png        # Screenshot of the 2×2 viewer
+└── README.md                        # You are here
+</pre>
 
+<hr>
 
----
+<h2>🔧 Requirements</h2>
+<p>You need Python and OpenCV. Install dependencies using pip:</p>
+<pre><code>pip install opencv-python numpy</code></pre>
 
-## 🔧 Requirements
+<hr>
 
-You need Python and OpenCV. Install dependencies using pip:
+<h2>🛠️ How to Run</h2>
+<h3>🔁 Step‑by‑Step Instructions</h3>
+<ol>
+  <li>Clone the Repository or download ZIP:
+    <pre><code>git clone https://github.com/&lt;your-username&gt;/opencv-week2.git
+cd opencv-week2/code</code></pre>
+  </li>
+  <li>Run the script:
+    <pre><code>python multi_stream_viewer.py</code></pre>
+  </li>
+</ol>
 
-```bash
-pip install opencv-python numpy
+<hr>
 
----
+<h2>🔍 Features Explained</h2>
 
-## 🛠️ How to Run
+<h3>🎥 1. Multi‑Stream RTSP Viewer (4 Cameras)</h3>
+<ul>
+  <li>Uses <strong>Python threading</strong> to fetch frames from 4 streams concurrently</li>
+  <li>Prevents UI blocking or lag</li>
+  <li>Automatically loops <code>.mp4</code> test streams or attempts reconnection for RTSP</li>
+</ul>
 
-### 🔁 Step‑by‑Step Instructions
+<h3>🔄 2. Real‑Time Motion Detection</h3>
+<ul>
+  <li>Utilizes <code>cv2.createBackgroundSubtractorMOG2</code> for motion detection</li>
+  <li>If movement is detected, draws a white rectangle with <strong>“Motion Detected”</strong> in black text</li>
+</ul>
 
-1. **Clone the Repository** or download ZIP:
+<h3>🛑 3. Camera Tamper Detection</h3>
 
-```bash
-git clone https://github.com/<your-username>/opencv-week2.git
-cd opencv-week2/code
+<h4>a. Blur Detection</h4>
+<ul>
+  <li>Uses the Laplacian variance metric</li>
+  <li>If sharpness (variance) is below a threshold (e.g., 100), the frame is considered blurred</li>
+</ul>
 
----
+<h4>b. Cover / Laser / Overexposure Detection</h4>
+<ul>
+  <li>Uses the grayscale histogram</li>
+  <li>If 95% or more of pixels are the same value (uniform distribution), then it is considered covered or overexposed</li>
+  <li>If compromise is detected, draws a red rectangle with <strong>“Camera Compromised”</strong> overlay</li>
+</ul>
 
-## 🔍 Features Explained
+<h3>🧱 4. 2×2 Video Grid Display</h3>
+<ul>
+  <li>Resizes all frames to the same size (e.g., 640×480)</li>
+  <li>Combines them into a grid using <code>np.hstack()</code> and <code>np.vstack()</code></li>
+  <li>Maintains alignment and consistent layout</li>
+</ul>
 
-### 🎥 1. Multi‑Stream RTSP Viewer (4 Cameras)
+<hr>
 
-- Uses **Python threading** to fetch frames from 4 streams concurrently.  
-- Prevents UI blocking or lag.  
-- Automatically loops `.mp4` test streams or attempts reconnection for RTSP.
+<h2>🖼️ Example Output Screenshot</h2>
+<p>Here’s what your viewer will look like:</p>
+<blockquote>🔲 Top‑left, Top‑right, Bottom‑left, Bottom‑right<br>✅ Motion detected or compromise warnings may appear overlayed.</blockquote>
+<img src="diagrams/screenshot_output.png" alt="Screenshot of 4-camera RTSP viewer with alerts">
 
-### 🔄 2. Real‑Time Motion Detection
+<hr>
 
-- Utilizes `cv2.createBackgroundSubtractorMOG2` for motion detection.  
-- If movement is detected, draws a white rectangle with **“Motion Detected”** in black text.
+<h2>🧾 Summary of Methods Used</h2>
+<table>
+  <tr><th>Task</th><th>Method / Technique</th></tr>
+  <tr><td>Multi‑Stream Handling</td><td><code>threading.Thread</code>, thread‑safe capture</td></tr>
+  <tr><td>Motion Detection</td><td><code>cv2.createBackgroundSubtractorMOG2</code> + thresholding</td></tr>
+  <tr><td>Blur Detection</td><td><code>cv2.Laplacian()</code> variance</td></tr>
+  <tr><td>Cover Detection</td><td>Histogram analysis via <code>cv2.calcHist()</code></td></tr>
+  <tr><td>Video Display</td><td><code>cv2.resize()</code>, <code>np.hstack()</code>, <code>np.vstack()</code></td></tr>
+  <tr><td>Overlay Text & Boxes</td><td><code>cv2.putText()</code>, <code>cv2.rectangle()</code></td></tr>
+</table>
 
-### 🛑 3. Camera Tamper Detection
+<hr>
 
-Checks for compromised video feed in two ways:
+<h2>🧠 Learnings & Insights</h2>
+<ul>
+  <li>RTSP / video streams can be <strong>unstable</strong>; reconnection logic is important</li>
+  <li>Motion detection may have <strong>false positives</strong>, so tuning thresholds is important</li>
+  <li>Tamper detection (blur, cover) is essential in surveillance setups</li>
+  <li>Multithreading with OpenCV is effective for handling multiple streams in real time</li>
+</ul>
 
-#### a. **Blur Detection**  
-- Uses the Laplacian variance metric.  
-- If sharpness (variance) is below a threshold (e.g., 100), the frame is considered blurred.
+<hr>
 
-#### b. **Cover / Laser / Overexposure Detection**  
-- Uses the grayscale histogram.  
-- If 95% or more of pixels are the same value (uniform distribution), then it is considered covered or overexposed.
+<h2>🧰 Troubleshooting Guide</h2>
+<table>
+  <tr><th>Problem</th><th>Likely Cause</th><th>Solution</th></tr>
+  <tr><td>Only 2 out of 4 videos show</td><td>URLs invalid or stream failing</td><td>Check URL or internet, enable logs</td></tr>
+  <tr><td>One window black or blank</td><td>That stream failed reading frames</td><td>Visual placeholder is shown for diagnostics</td></tr>
+  <tr><td>Motion always triggered</td><td>Too low threshold</td><td>Increase motion threshold or filter noise</td></tr>
+  <tr><td>Frequent “Camera Compromised” alerts</td><td>Too strict thresholds</td><td>Relax blur/histogram thresholds or conditions</td></tr>
+</table>
 
-If compromise is detected, draws a red rectangle with **“Camera Compromised”** overlay.
-
-### 🧱 4. 2×2 Video Grid Display
-
-- Resizes all frames to the same size (e.g., 640×480).  
-- Combines them into a grid using `np.hstack()` and `np.vstack()`.  
-- Maintains alignment and consistent layout.
-
----
-
-## 🖼️ Example Output Screenshot
-
-Here’s what your viewer will look like:
-
-> 🔲 Top‑left, Top‑right, Bottom‑left, Bottom‑right  
-> ✅ Motion detected or compromise warnings may appear overlayed.
-
-![Output Screenshot](diagrams/screenshot_output.png)
-
-
----
-
-## 🧾 Summary of Methods Used
-
-| Task | Method / Technique |
-|------|--------------------|
-| Multi‑Stream Handling | `threading.Thread`, thread‑safe capture |
-| Motion Detection | `cv2.createBackgroundSubtractorMOG2` + thresholding |
-| Blur Detection | `cv2.Laplacian()` variance |
-| Cover Detection | Histogram analysis via `cv2.calcHist()` |
-| Video Display | `cv2.resize()`, `np.hstack()`, `np.vstack()` |
-| Overlay Text & Boxes | `cv2.putText()`, `cv2.rectangle()` |
-
----
-
-## 🧠 Learnings & Insights
-
-- RTSP / video streams can be **unstable**; reconnection logic is important.  
-- Motion detection may have **false positives**, so you need to **tune thresholds**.  
-- Tamper detection (blur, cover) is essential in surveillance setups.  
-- Using multithreading with OpenCV is effective for handling multiple streams in real time.
-
----
-
-## 🧰 Troubleshooting Guide
-
-| Problem | Likely Cause | Solution |
-|--------|----------------|----------|
-| Only 2 out of 4 videos show | URLs invalid or stream failing | Check URL or internet, enable logs |
-| One window black or blank | That stream failed reading frames | Visual placeholder is shown for diagnostics |
-| Motion always triggered (false positive) | Too low threshold | Increase motion threshold or filter noise |
-| Frequent “Camera Compromised” alerts | Too strict thresholds | Relax blur/histogram thresholds or conditions |
-
----
-
-
-
-
+</body>
+</html>
